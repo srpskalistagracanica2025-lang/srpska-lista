@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Srpska Lista 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f0f;color:#e8e8e8;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding-bottom:80px}
+.hdr{background:#C8102E;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(200,16,46,0.5)}
+.hdr h1{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#fff}
+.hdr-info{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.8);text-align:right;line-height:1.6}
+.tabs{display:flex;background:#151515;border-bottom:1px solid #222;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{flex:1;min-width:60px;padding:12px 4px;background:none;border:none;border-bottom:3px solid transparent;color:#555;font-family:'IBM Plex Mono',monospace;font-size:10px;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.tab.on{color:#ff3352;border-bottom-color:#ff3352;background:rgba(255,51,82,.06)}
+.pg{display:none;padding:14px}
+.pg.on{display:block}
+.sec{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:#C8102E;margin-bottom:12px;border-bottom:1px solid #222;padding-bottom:6px}
+.card{background:#1a1a1a;border:1px solid #252525;border-radius:8px;padding:14px;margin-bottom:12px}
+label{display:block;font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;font-family:'IBM Plex Mono',monospace}
+select{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:6px;color:#e8e8e8;padding:11px 12px;font-size:14px;margin-bottom:12px;-webkit-appearance:none;appearance:none;cursor:pointer}
+select:focus{outline:none;border-color:#C8102E}
+input[type=number]{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:6px;color:#e8e8e8;padding:10px 12px;font-size:15px;text-align:center;-webkit-appearance:none;appearance:none}
+input[type=number]:focus{outline:none;border-color:#C8102E}
+.row-cand{display:grid;grid-template-columns:1fr 90px;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid #1e1e1e}
+.row-cand:last-child{border-bottom:none}
+.cname{font-size:13px}
+.cnum{font-size:10px;color:#555;font-family:'IBM Plex Mono',monospace}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 16px;border:none;border-radius:8px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;-webkit-tap-highlight-color:transparent;width:100%}
+.btn-red{background:#C8102E;color:#fff;margin-top:14px}
+.btn-red:active{background:#ff3352}
+.btn-gray{background:#252525;color:#e8e8e8}
+.btn-del{background:#3d1515;color:#f87171}
+.totbar{display:flex;gap:12px;background:#151515;border:1px solid #222;border-radius:8px;padding:12px 14px;margin-bottom:14px;flex-wrap:wrap}
+.tot{flex:1;min-width:70px}
+.tot-l{font-size:9px;color:#555;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:1px}
+.tot-v{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#ff3352}
+table{width:100%;border-collapse:collapse}
+th{background:#151515;padding:8px 10px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;color:#555;border-bottom:1px solid #222}
+td{padding:9px 10px;border-bottom:1px solid #1e1e1e;font-size:13px;vertical-align:middle}
+.vbar{height:3px;background:#C8102E;border-radius:2px;margin-top:3px}
+.vnum{font-family:'IBM Plex Mono',monospace;font-weight:600;color:#ff3352;text-align:right}
+.rank{color:#555;font-size:11px;font-family:'IBM Plex Mono',monospace;width:22px}
+.badge{display:inline-block;background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.3);color:#ff3352;border-radius:4px;padding:1px 5px;font-family:'IBM Plex Mono',monospace;font-size:10px}
+.vmbadge{display:inline-block;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:#93c5fd;border-radius:4px;padding:1px 5px;font-family:'IBM Plex Mono',monospace;font-size:10px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pcell{background:#1a1a1a;border:1px solid #252525;border-radius:8px;padding:10px 12px}
+.pcell.done{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.05)}
+.pcell.part{border-color:rgba(234,179,8,.4);background:rgba(234,179,8,.05)}
+.pname{font-size:12px;font-weight:600;margin-bottom:3px}
+.pcnt{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#555}
+.pbar-w{height:4px;background:#252525;border-radius:2px;margin-top:6px}
+.pbar{height:4px;border-radius:2px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.dot-g{background:#22c55e}
+.dot-y{background:#eab308}
+.dot-x{background:#333}
+.bmsec{margin-bottom:8px}
+.bmhdr{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#151515;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.vmrow{display:flex;justify-content:space-between;padding:7px 12px;border-bottom:1px solid #1e1e1e;font-size:12px}
+.vmlist{background:rgba(255,255,255,.02);border-radius:0 0 6px 6px;display:none;overflow:hidden;margin-bottom:2px}
+.vmlist.open{display:block}
+.chart-wrap{position:relative;height:300px;margin-top:10px}
+.log-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #1e1e1e;gap:8px}
+.log-meta{font-size:10px;color:#555;font-family:'IBM Plex Mono',monospace;margin-top:3px}
+.log-v{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#C8102E}
+.xbtn{background:none;border:none;color:#444;font-size:20px;cursor:pointer;padding:4px;line-height:1}
+.xbtn:hover{color:#ff3352}
+.hint{text-align:center;padding:30px 16px;color:#444;font-size:13px}
+.warn{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.25);border-radius:6px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#fde047;line-height:1.6}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#22c55e;color:#000;padding:11px 24px;border-radius:40px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;transition:transform .3s;z-index:999;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.err{background:#ff3352;color:#fff}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <h1>Srpska Lista</h1>
+    <div style="font-size:9px;color:rgba(255,255,255,0.5);font-family:'IBM Plex Mono',monospace">IZBORI 2026 &middot; KOSOVO</div>
+  </div>
+  <div class="hdr-info" id="hdrinfo">0 glasova<br>0/33 VM</div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" onclick="go('unos',this)">Unos</button>
+  <button class="tab" onclick="go('napredak',this)">Napredak</button>
+  <button class="tab" onclick="go('rezultati',this)">Rezultati</button>
+  <button class="tab" onclick="go('grafikon',this)">Grafikon</button>
+  <button class="tab" onclick="go('log',this)">Log</button>
+</div>
+
+<div class="pg on" id="pg-unos">
+  <div class="card">
+    <div class="sec">Novi unos</div>
+    <label>Centar</label>
+    <select id="sel-centar" onchange="onCentar()">
+      <option value="">&#8212; Odaberi centar &#8212;</option>
+    </select>
+    <label>Glasacko mesto (VM)</label>
+    <select id="sel-vm" onchange="onVm()">
+      <option value="">&#8212; Prvo odaberi centar &#8212;</option>
+    </select>
+    <div id="warn-exist" class="warn" style="display:none">
+      &#9888; Za ovo VM vec postoje unosi. Novi unos ce biti dodat na postojece.
+    </div>
+    <div id="cand-form" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 90px;padding:4px;margin-bottom:4px">
+        <span style="font-size:10px;color:#555;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:1px">Kandidat</span>
+        <span style="font-size:10px;color:#555;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:1px;text-align:center">Glasovi</span>
+      </div>
+      <div id="cand-rows"></div>
+      <button class="btn btn-red" onclick="saveBulk()">&#10003; Sacuvaj sve</button>
+    </div>
+    <div id="hint-sel" class="hint">Odaberi centar i VM gore</div>
+  </div>
+</div>
+
+<div class="pg" id="pg-napredak">
+  <div class="sec">Napredak</div>
+  <div style="font-size:10px;color:#555;margin-bottom:12px;font-family:'IBM Plex Mono',monospace">
+    <span class="dot dot-g"></span>kompletno &nbsp;
+    <span class="dot dot-y"></span>delimicno &nbsp;
+    <span class="dot dot-x"></span>nije poceto
+  </div>
+  <div class="pgrid" id="pgrid"></div>
+</div>
+
+<div class="pg" id="pg-rezultati">
+  <div class="totbar">
+    <div class="tot"><div class="tot-l">Glasova</div><div class="tot-v" id="t-glasovi">0</div></div>
+    <div class="tot"><div class="tot-l">VM</div><div class="tot-v" id="t-vm">0/33</div></div>
+    <div class="tot"><div class="tot-l">Centara</div><div class="tot-v" id="t-ct">0/14</div></div>
+  </div>
+  <div style="margin-bottom:12px">
+    <label>Filter centar</label>
+    <select id="f-centar" onchange="onFCentar()" style="margin-bottom:8px">
+      <option value="">Svi centri</option>
+    </select>
+    <label>Filter VM</label>
+    <select id="f-vm" onchange="renderRez()">
+      <option value="">Sva VM</option>
+    </select>
+  </div>
+  <div class="sec">Rang lista</div>
+  <div style="overflow-x:auto">
+    <table>
+      <thead><tr><th>#</th><th>Kandidat</th><th style="text-align:right">Glasovi</th></tr></thead>
+      <tbody id="rez-body"></tbody>
+    </table>
+  </div>
+  <div style="margin-top:20px">
+    <div class="sec">Po centrima</div>
+    <div id="ct-summary"></div>
+  </div>
+</div>
+
+<div class="pg" id="pg-grafikon">
+  <label>Tip</label>
+  <select id="chart-tip" onchange="onChartTip()" style="margin-bottom:10px">
+    <option value="kand">Glasovi po kandidatima</option>
+    <option value="cent">Glasovi po centrima</option>
+    <option value="kc">Kandidat po centrima</option>
+  </select>
+  <div id="chart-kc-wrap" style="display:none;margin-bottom:10px">
+    <label>Kandidat</label>
+    <select id="chart-kand" onchange="renderChart()"></select>
+  </div>
+  <div class="chart-wrap"><canvas id="chart"></canvas></div>
+</div>
+
+<div class="pg" id="pg-log">
+  <div class="sec">Istorija</div>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <button class="btn btn-gray" style="flex:1" onclick="expCSV()">Izvezi CSV</button>
+    <button class="btn btn-del" style="flex:1" onclick="delAll()">Obrisi sve</button>
+  </div>
+  <div id="log-list"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var CENTRI = [
+  {id:"3401", name:"Gracanica",        n:9},
+  {id:"3402", name:"Laplje Selo",      n:3},
+  {id:"3403", name:"Batuse",           n:1},
+  {id:"3404", name:"Ugljare",          n:3},
+  {id:"3405", name:"Donja Gusterica",  n:3},
+  {id:"3406", name:"Lepina",           n:2},
+  {id:"3407", name:"Susica",           n:2},
+  {id:"3408", name:"Preoce",           n:2},
+  {id:"3409", name:"Dobrotin",         n:2},
+  {id:"3410", name:"Gornja Gusterica", n:1},
+  {id:"3411", name:"Suvi Do",          n:1},
+  {id:"3412", name:"Caglavica",        n:2},
+  {id:"3413", name:"Kisnica",          n:1},
+  {id:"3414", name:"Marigona",         n:1}
+];
+
+var KAND = [
+  {id:1,  n:"Zlatan Elek"},
+  {id:2,  n:"Igor Simic"},
+  {id:3,  n:"Ljiljana Stefanovic"},
+  {id:4,  n:"Slavko Simic"},
+  {id:5,  n:"Srdjan Popovic"},
+  {id:6,  n:"Jovana Radosavljevic"},
+  {id:7,  n:"Milan Joksimovic"},
+  {id:8,  n:"Branislav Nikolic"},
+  {id:9,  n:"Tanja Vujovic"},
+  {id:10, n:"Ivica Cenic"},
+  {id:11, n:"Zoran Golubovic"},
+  {id:12, n:"Verica Ceranic"},
+  {id:13, n:"Milan Kostic"},
+  {id:14, n:"Marko Arsic"},
+  {id:15, n:"Ruzica Bozovic"},
+  {id:16, n:"Nemanja Bisevac"},
+  {id:17, n:"Violeta Trajkovic"},
+  {id:18, n:"Sreten Ivanovic"},
+  {id:19, n:"Jelena Maksimovic"},
+  {id:20, n:"Milosav Vukojevic"},
+  {id:21, n:"Mirjana Barac"},
+  {id:22, n:"Dusan Markovic"},
+  {id:23, n:"Filip Djordjevic"},
+  {id:24, n:"Aleksandra Simonovic"},
+  {id:25, n:"Ana Curcic"}
+];
+
+var ALL_VM = [];
+CENTRI.forEach(function(c) {
+  for (var i = 1; i <= c.n; i++) {
+    var num = (i < 10) ? ("0" + i) : ("" + i);
+    ALL_VM.push({vmId: c.id + "/" + num, cId: c.id});
+  }
+});
+
+var entries = [];
+try { entries = JSON.parse(localStorage.getItem("sl3") || "[]"); } catch(e) { entries = []; }
+
+var chartInst = null;
+
+// INIT
+(function() {
+  ["sel-centar", "f-centar"].forEach(function(sid) {
+    var s = document.getElementById(sid);
+    CENTRI.forEach(function(c) {
+      var o = document.createElement("option");
+      o.value = c.id;
+      o.textContent = c.id + " - " + c.name;
+      s.appendChild(o);
+    });
+  });
+  var ck = document.getElementById("chart-kand");
+  KAND.forEach(function(k) {
+    var o = document.createElement("option");
+    o.value = k.id;
+    o.textContent = k.id + ". " + k.n;
+    ck.appendChild(o);
+  });
+  updateHdr();
+  renderPgrid();
+  renderRez();
+  renderLog();
+})();
+
+function go(name, btn) {
+  document.querySelectorAll(".tab").forEach(function(b) { b.classList.remove("on"); });
+  document.querySelectorAll(".pg").forEach(function(p) { p.classList.remove("on"); });
+  btn.classList.add("on");
+  document.getElementById("pg-" + name).classList.add("on");
+  if (name === "grafikon") renderChart();
+  if (name === "rezultati") renderRez();
+  if (name === "log") renderLog();
+  if (name === "napredak") renderPgrid();
+}
+
+function onCentar() {
+  var cId = document.getElementById("sel-centar").value;
+  var vmSel = document.getElementById("sel-vm");
+  vmSel.innerHTML = "<option value=\"\">- Odaberi VM -</option>";
+  document.getElementById("cand-form").style.display = "none";
+  document.getElementById("hint-sel").style.display = "block";
+  document.getElementById("warn-exist").style.display = "none";
+  if (!cId) return;
+  ALL_VM.filter(function(v) { return v.cId === cId; }).forEach(function(v) {
+    var o = document.createElement("option");
+    o.value = v.vmId;
+    o.textContent = "VM " + v.vmId;
+    vmSel.appendChild(o);
+  });
+}
+
+function onVm() {
+  var vmId = document.getElementById("sel-vm").value;
+  if (!vmId) {
+    document.getElementById("cand-form").style.display = "none";
+    document.getElementById("hint-sel").style.display = "block";
+    document.getElementById("warn-exist").style.display = "none";
+    return;
+  }
+  document.getElementById("hint-sel").style.display = "none";
+  var has = entries.some(function(e) { return e.vmId === vmId; });
+  document.getElementById("warn-exist").style.display = has ? "block" : "none";
+  buildForm(vmId);
+  document.getElementById("cand-form").style.display = "block";
+}
+
+function buildForm(vmId) {
+  var exist = {};
+  entries.filter(function(e) { return e.vmId === vmId; }).forEach(function(e) {
+    exist[e.kId] = (exist[e.kId] || 0) + e.votes;
+  });
+  var html = "";
+  KAND.forEach(function(k) {
+    var val = exist[k.id] !== undefined ? exist[k.id] : "";
+    html += "<div class=\"row-cand\">"
+      + "<div><div class=\"cname\">" + k.n + "</div>"
+      + "<div class=\"cnum\">#" + k.id + "</div></div>"
+      + "<input type=\"number\" id=\"bi-" + k.id + "\" min=\"0\" value=\"" + val + "\" placeholder=\"0\">"
+      + "</div>";
+  });
+  document.getElementById("cand-rows").innerHTML = html;
+}
+
+function saveBulk() {
+  var cId = document.getElementById("sel-centar").value;
+  var vmId = document.getElementById("sel-vm").value;
+  if (!cId || !vmId) { toast("Odaberi centar i VM", true); return; }
+  var cnt = 0;
+  var ts = new Date().toISOString();
+  KAND.forEach(function(k) {
+    var el = document.getElementById("bi-" + k.id);
+    if (!el) return;
+    var v = parseInt(el.value);
+    if (!isNaN(v) && v > 0) {
+      entries.push({id: Date.now() + Math.random(), kId: k.id, vmId: vmId, cId: cId, votes: v, ts: ts});
+      cnt++;
+    }
+  });
+  if (cnt === 0) { toast("Nisi uneo nijedan glas", true); return; }
+  save();
+  updateHdr();
+  renderPgrid();
+  renderRez();
+  renderLog();
+  toast("Sacuvano " + cnt + " kandidata za VM " + vmId);
+  document.getElementById("sel-centar").value = "";
+  document.getElementById("sel-vm").innerHTML = "<option value=\"\">- Prvo odaberi centar -</option>";
+  document.getElementById("cand-form").style.display = "none";
+  document.getElementById("hint-sel").style.display = "block";
+  document.getElementById("warn-exist").style.display = "none";
+}
+
+function renderPgrid() {
+  var done = {};
+  entries.forEach(function(e) { done[e.vmId] = true; });
+  var html = "";
+  CENTRI.forEach(function(c) {
+    var vms = ALL_VM.filter(function(v) { return v.cId === c.id; });
+    var d = vms.filter(function(v) { return done[v.vmId]; }).length;
+    var pct = Math.round(d / c.n * 100);
+    var cls = (d === c.n) ? "done" : (d > 0) ? "part" : "";
+    var barClr = (d === c.n) ? "#22c55e" : (d > 0) ? "#eab308" : "#333";
+    html += "<div class=\"pcell " + cls + "\">"
+      + "<div class=\"pname\">" + c.name + "</div>"
+      + "<div class=\"pcnt\">" + d + "/" + c.n + " VM (" + pct + "%)</div>"
+      + "<div class=\"pbar-w\"><div class=\"pbar\" style=\"width:" + pct + "%;background:" + barClr + "\"></div></div>"
+      + "</div>";
+  });
+  document.getElementById("pgrid").innerHTML = html;
+}
+
+function onFCentar() {
+  var cId = document.getElementById("f-centar").value;
+  var fvm = document.getElementById("f-vm");
+  fvm.innerHTML = "<option value=\"\">Sva VM</option>";
+  if (cId) {
+    ALL_VM.filter(function(v) { return v.cId === cId; }).forEach(function(v) {
+      var o = document.createElement("option");
+      o.value = v.vmId;
+      o.textContent = "VM " + v.vmId;
+      fvm.appendChild(o);
+    });
+  }
+  renderRez();
+}
+
+function getAgg(fC, fV) {
+  var t = {};
+  KAND.forEach(function(k) { t[k.id] = 0; });
+  entries.forEach(function(e) {
+    if (fC && e.cId !== fC) return;
+    if (fV && e.vmId !== fV) return;
+    t[e.kId] = (t[e.kId] || 0) + e.votes;
+  });
+  return t;
+}
+
+function renderRez() {
+  var fC = document.getElementById("f-centar").value;
+  var fV = document.getElementById("f-vm").value;
+  var t = getAgg(fC, fV);
+  var sorted = KAND.slice().sort(function(a, b) { return t[b.id] - t[a.id]; });
+  var maxV = 1;
+  var totalV = 0;
+  Object.keys(t).forEach(function(k) { if (t[k] > maxV) maxV = t[k]; totalV += t[k]; });
+  var vmD = {}, ctD = {};
+  entries.forEach(function(e) { vmD[e.vmId] = true; ctD[e.cId] = true; });
+  document.getElementById("t-glasovi").textContent = totalV.toLocaleString();
+  document.getElementById("t-vm").textContent = Object.keys(vmD).length + "/" + ALL_VM.length;
+  document.getElementById("t-ct").textContent = Object.keys(ctD).length + "/14";
+
+  var rows = "";
+  sorted.forEach(function(k, i) {
+    var v = t[k.id];
+    var pct = Math.round(v / maxV * 100);
+    rows += "<tr><td class=\"rank\">" + (i+1) + "</td>"
+      + "<td><div class=\"cname\">" + k.n + "</div>"
+      + "<div style=\"font-size:9px;color:#555\">#" + k.id + "</div>"
+      + "<div class=\"vbar\" style=\"width:" + pct + "%\"></div></td>"
+      + "<td class=\"vnum\">" + v + "</td></tr>";
+  });
+  document.getElementById("rez-body").innerHTML = rows;
+
+  var ctShow = fC ? CENTRI.filter(function(c) { return c.id === fC; }) : CENTRI;
+  var ctHtml = "";
+  ctShow.forEach(function(c) {
+    var vmsOfC = ALL_VM.filter(function(v) { return v.cId === c.id; });
+    var ctTot = 0;
+    var vmsD = {};
+    entries.filter(function(e) { return e.cId === c.id; }).forEach(function(e) {
+      ctTot += e.votes; vmsD[e.vmId] = true;
+    });
+    var vmsDoneCnt = Object.keys(vmsD).length;
+    var dotC = (vmsDoneCnt === c.n) ? "dot-g" : (vmsDoneCnt > 0) ? "dot-y" : "dot-x";
+    var vmsShow = fV ? vmsOfC.filter(function(v) { return v.vmId === fV; }) : vmsOfC;
+    var vmRows = "";
+    vmsShow.forEach(function(vm) {
+      var vmT = 0;
+      var hasD = false;
+      entries.filter(function(e) { return e.vmId === vm.vmId; }).forEach(function(e) { vmT += e.votes; hasD = true; });
+      vmRows += "<div class=\"vmrow\"><span class=\"vmbadge\">" + vm.vmId + "</span>"
+        + "<span style=\"font-family:'IBM Plex Mono',monospace;color:" + (hasD ? "#ff3352" : "#444") + "\">" + vmT + "</span></div>";
+    });
+    ctHtml += "<div class=\"bmsec\">"
+      + "<div class=\"bmhdr\" onclick=\"toggleVm('vl-" + c.id + "')\">"
+      + "<div style=\"font-size:13px;font-weight:600\"><span class=\"dot " + dotC + "\"></span>"
+      + "<span class=\"badge\">" + c.id + "</span> " + c.name + "</div>"
+      + "<div style=\"display:flex;align-items:center;gap:10px\">"
+      + "<span style=\"font-family:'IBM Plex Mono',monospace;font-size:13px;color:#ff3352\">" + ctTot + "</span>"
+      + "<span style=\"font-size:10px;color:#555\">" + vmsDoneCnt + "/" + c.n + " VM</span>"
+      + "<span style=\"color:#555\">+</span></div></div>"
+      + "<div class=\"vmlist\" id=\"vl-" + c.id + "\">" + vmRows + "</div></div>";
+  });
+  document.getElementById("ct-summary").innerHTML = ctHtml;
+}
+
+function toggleVm(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle("open");
+}
+
+function onChartTip() {
+  document.getElementById("chart-kc-wrap").style.display =
+    document.getElementById("chart-tip").value === "kc" ? "block" : "none";
+  renderChart();
+}
+
+function renderChart() {
+  var tip = document.getElementById("chart-tip").value;
+  var ctx = document.getElementById("chart").getContext("2d");
+  if (chartInst) { chartInst.destroy(); chartInst = null; }
+  var labels = [], data = [], color = "rgba(200,16,46,0.75)", bc = "#C8102E";
+  if (tip === "kand") {
+    var t = getAgg("", "");
+    var s = KAND.slice().sort(function(a,b) { return t[b.id]-t[a.id]; });
+    labels = s.map(function(k) { return k.id + "." + k.n.split(" ")[0]; });
+    data = s.map(function(k) { return t[k.id]; });
+  } else if (tip === "cent") {
+    var ct = {}; CENTRI.forEach(function(c) { ct[c.id] = 0; });
+    entries.forEach(function(e) { ct[e.cId] = (ct[e.cId]||0) + e.votes; });
+    var sc = CENTRI.slice().sort(function(a,b) { return ct[b.id]-ct[a.id]; });
+    labels = sc.map(function(c) { return c.name; });
+    data = sc.map(function(c) { return ct[c.id]; });
+    color = "rgba(59,130,246,0.75)"; bc = "#3b82f6";
+  } else {
+    var kId = parseInt(document.getElementById("chart-kand").value);
+    var pc = {}; CENTRI.forEach(function(c) { pc[c.id] = 0; });
+    entries.filter(function(e) { return e.kId === kId; }).forEach(function(e) { pc[e.cId] = (pc[e.cId]||0) + e.votes; });
+    labels = CENTRI.map(function(c) { return c.name; });
+    data = CENTRI.map(function(c) { return pc[c.id]; });
+    color = "rgba(34,197,94,0.75)"; bc = "#22c55e";
+  }
+  chartInst = new Chart(ctx, {
+    type: "bar",
+    data: {labels: labels, datasets: [{data: data, backgroundColor: color, borderColor: bc, borderWidth: 1, borderRadius: 3}]},
+    options: {responsive: true, maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {ticks: {color:"#555", font:{size:9}, maxRotation:55}, grid:{color:"#1e1e1e"}},
+        y: {ticks: {color:"#555", font:{size:10}}, grid:{color:"#222"}}
+      }
+    }
+  });
+}
+
+function renderLog() {
+  var el = document.getElementById("log-list");
+  if (!entries.length) { el.innerHTML = "<div class=\"hint\">Nema unosa</div>"; return; }
+  var s = entries.slice().sort(function(a,b) { return new Date(b.ts) - new Date(a.ts); });
+  var h = "";
+  s.forEach(function(e) {
+    var k = KAND.filter(function(x) { return x.id === e.kId; })[0] || {n:"?"};
+    var c = CENTRI.filter(function(x) { return x.id === e.cId; })[0] || {name:""};
+    var dt = new Date(e.ts);
+    h += "<div class=\"log-row\">"
+      + "<div><div style=\"font-size:13px;font-weight:600\">" + k.n + "</div>"
+      + "<div class=\"log-meta\"><span class=\"vmbadge\">" + e.vmId + "</span> " + c.name
+      + " &middot; " + dt.toLocaleDateString() + " " + dt.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
+      + "</div></div>"
+      + "<div style=\"display:flex;align-items:center;gap:8px\">"
+      + "<div class=\"log-v\">" + e.votes + "</div>"
+      + "<button class=\"xbtn\" onclick=\"delEntry(" + e.id + ")\">&#215;</button>"
+      + "</div></div>";
+  });
+  el.innerHTML = h;
+}
+
+function delEntry(id) {
+  if (!confirm("Obrisati unos?")) return;
+  entries = entries.filter(function(e) { return e.id !== id; });
+  save(); updateHdr(); renderPgrid(); renderRez(); renderLog();
+}
+
+function save() {
+  try { localStorage.setItem("sl3", JSON.stringify(entries)); } catch(e) {}
+}
+
+function updateHdr() {
+  var vmD = {}, tot = 0;
+  entries.forEach(function(e) { vmD[e.vmId] = true; tot += e.votes; });
+  document.getElementById("hdrinfo").innerHTML = tot.toLocaleString() + " glasova<br>" + Object.keys(vmD).length + "/" + ALL_VM.length + " VM";
+}
+
+function toast(msg, err) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = err ? "err show" : "show";
+  setTimeout(function() { t.classList.remove("show"); }, 2500);
+}
+
+function delAll() {
+  if (!confirm("Obrisati SVE podatke?")) return;
+  entries = [];
+  save(); updateHdr(); renderPgrid(); renderRez(); renderLog();
+  toast("Podaci obrisani");
+}
+
+function expCSV() {
+  if (!entries.length) { toast("Nema podataka", true); return; }
+  var rows = [["ID","Kandidat","VM","Centar_ID","Centar","Glasovi","Vreme"]];
+  entries.forEach(function(e) {
+    var k = KAND.filter(function(x) { return x.id === e.kId; })[0] || {n:"?"};
+    var c = CENTRI.filter(function(x) { return x.id === e.cId; })[0] || {name:"?"};
+    rows.push([e.id, k.n, e.vmId, e.cId, c.name, e.votes, e.ts]);
+  });
+  var csv = rows.map(function(r) { return r.map(function(v) { return '"' + v + '"'; }).join(","); }).join("\n");
+  var blob = new Blob(["\uFEFF" + csv], {type:"text/csv;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "srpska-lista-" + new Date().toISOString().slice(0,10) + ".csv";
+  a.click();
+}
+</script>
+</body>
+</html>
